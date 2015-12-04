@@ -38,6 +38,9 @@ var mainState = {
     this.pipes = game.add.group(); // Create a group
     this.pipes.enableBody = true; // Add physics to the group
     this.pipes.createMultiple(20, 'pipe'); // Create 20 pipes
+
+    // Call the 'addRowOfPipes' function every 1.5 seconds
+    this.timer = game.time.events.loop(1500, this.addRowOfPipes, this);
   },
 
   // This function is called 60 times per second.
