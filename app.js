@@ -12,6 +12,9 @@ var mainState = {
 
     // Load the bird sprite
     game.load.image('bird', 'assets/bird.png');
+
+    // Load the pipe sprite
+    game.load.image('pipe', 'assets/pipe.png');
   },
 
   // This function is called after the 'preload' function.
