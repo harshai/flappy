@@ -61,8 +61,8 @@ var mainState = {
     game.state.start('main');
   },
 
-  // Add one pipe to the game
-  addOnePipe: function() {
+  // Add one pipe
+  addOnePipe: function(x, y) {
     // Get the first dead pipe of the group
     var pipe = this.pipes.getFirstDead();
 
@@ -75,6 +75,19 @@ var mainState = {
     // Kill the pipe when it's no longer visible
     pipe.checkWorldBounds = true;
     pipe.outOfBoundsKill = true;
+  },
+
+  // Add six pipes in a row with a hole in the middle
+  addRowOfPipes: function() {
+    // Pick where the hole will be
+    var hole = Math.floor(Math.random() * 5) + 1;
+
+    // Add the six pipes
+    for (var i = 0; i < 8; i++) {
+      if (i != hole && i != hole + 1) {
+        this.addOnePipe(400, i * 60 + 10);
+      }
+    }
   }
 
 };
