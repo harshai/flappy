@@ -95,6 +95,10 @@ var mainState = {
         this.addOnePipe(400, i * 60 + 10);
       }
     }
+
+    // Increase the score by 1 each time new pipes are created
+    this.score += 1;
+    this.labelScore.text = this.score;
   }
 
 };
