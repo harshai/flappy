@@ -33,6 +33,11 @@ var mainState = {
     // Call the 'jump' function when the space key is hit
     var spaceKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     spaceKey.onDown.add(this.jump, this);
+
+    // Create a group of pipes
+    this.pipes = game.add.group(); // Create a group
+    this.pipes.enableBody = true; // Add physics to the group
+    this.pipes.createMultiple(20, 'pipe'); // Create 20 pipes
   },
 
   // This function is called 60 times per second.
