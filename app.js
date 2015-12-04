@@ -59,6 +59,22 @@ var mainState = {
   restartGame: function() {
     // Start the 'main' state, which restarts the game
     game.state.start('main');
+  },
+
+  // Add one pipe to the game
+  addOnePipe: function() {
+    // Get the first dead pipe of the group
+    var pipe = this.pipes.getFirstDead();
+
+    // Set new position of the pipe
+    pipe.reset(x, y);
+
+    // Add velocity to the pipe to make it move left
+    pipe.body.velocity.x = -200;
+
+    // Kill the pipe when it's no longer visible
+    pipe.checkWorldBounds = true;
+    pipe.outOfBoundsKill = true;
   }
 
 };
