@@ -70,6 +70,11 @@ var mainState = {
 
   // Make the bird jump
   jump: function() {
+    // We don't want to be able to make the bird jump when the bird is dead.
+    if (!this.bird.alive) {
+      return;
+    }
+    
     // Add a vertical velocity to the bird
     this.bird.body.velocity.y = -350;
 
