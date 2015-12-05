@@ -36,6 +36,9 @@ var mainState = {
     // Change the center of rotation of the bird, called "anchor"
     // (from upper-left to center-and-little-more-to-the-left)
     this.bird.anchor.setTo(-0.2, 0.5);
+    
+    // Add the jump sound
+    this.jumpSound = game.add.audio('jump');
 
     // Call the 'jump' function when the space key is hit
     var spaceKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
