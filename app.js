@@ -64,8 +64,8 @@ var mainState = {
       this.restartGame();
     }
 
-    // Call 'restartGame' each time the bird collides with a pipe
-    game.physics.arcade.overlap(this.bird, this.pipes, this.restartGame, null, this);
+    // Call 'hitPipe' each time the bird collides with a pipe
+    game.physics.arcade.overlap(this.bird, this.pipes, this.hitPipe, null, this);
   },
 
   // Make the bird jump
