@@ -30,6 +30,10 @@ var mainState = {
     game.physics.arcade.enable(this.bird);
     this.bird.body.gravity.y = 1000;
 
+    // Change the center of rotation of the bird, called "anchor"
+    // (from upper-left to center-and-little-more-to-the-left)
+    this.bird.anchor.setTo(-0.2, 0.5);
+
     // Call the 'jump' function when the space key is hit
     var spaceKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     spaceKey.onDown.add(this.jump, this);
