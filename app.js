@@ -50,6 +50,11 @@ var mainState = {
   // This function is called 60 times per second.
   // It contains the game's logic.
   update: function() {
+    // Slowly rotate the bird downward, up to a certain point
+    if (this.bird.angle < 20) {
+      this.bird.angle += 1;
+    }
+
     // If the bird is out of the world, call the 'restartGame' function
     if (this.bird.inWorld === false) {
       this.restartGame();
