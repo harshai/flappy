@@ -15,6 +15,9 @@ var mainState = {
 
     // Load the pipe sprite
     game.load.image('pipe', 'assets/pipe.png');
+
+    // Load the jump sound
+    game.load.audio('jump', 'assets/jump.wav');
   },
 
   // This function is called after the 'preload' function.
@@ -74,7 +77,7 @@ var mainState = {
     if (!this.bird.alive) {
       return;
     }
-    
+
     // Add a vertical velocity to the bird
     this.bird.body.velocity.y = -350;
 
