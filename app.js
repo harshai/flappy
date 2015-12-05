@@ -120,6 +120,24 @@ var mainState = {
     // Increase the score by 1 each time new pipes are created
     this.score += 1;
     this.labelScore.text = this.score;
+  },
+
+  hitPipe: function() {
+    // If the bird has already hit a pipe, we have nothing to do.
+    if (!this.bird.alive) {
+      return;
+    }
+
+    // Set the alive property of the bird to false
+    this.bird.alive = false;
+
+    // Prevent new pipes from appearing
+    game.time.events.remove(this.timer);
+
+    // Go through all pipes, and stop their movement
+    this.pipes.forEachAlive(function(p) {
+      p.body.velocity.x = 0;
+    }, this);
   }
 
 };
