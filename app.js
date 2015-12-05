@@ -92,6 +92,9 @@ var mainState = {
 
     // Start it
     animation.start();
+
+    // Play the jump sound
+    this.jumpSound.play();
   },
 
   // Restart the game
