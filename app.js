@@ -42,7 +42,7 @@ var mainState = {
     this.eta = this.eta || playerDetails.eta;
     this.prevScore = this.prevScore || 0;
     game.add.tileSprite(0, 0, game.world.width, game.world.height, 'background');
-
+    localStorage.highScore = parseInt(localStorage.highScore, 10) || playerDetails.highScore;
     this.labelHighScore = game.add.text(game.world.centerX, 465, 'High Score: ' + localStorage.highScore, fontSettings);
     this.labelHighScore.anchor.setTo(0.5);
 
@@ -165,6 +165,7 @@ var mainState = {
   // Restart the game
   restartGame: function() {
     // Start the 'main' state, which restarts the game
+    console.log(Math.max(this.score, parseInt(localStorage.highScore, 10)));
     localStorage.highScore = Math.max(this.score, parseInt(localStorage.highScore, 10));
     this.prevScore = this.score;
     game.state.start('main');
