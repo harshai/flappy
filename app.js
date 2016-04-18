@@ -49,6 +49,7 @@ var mainState = {
     this.labelprevScore = game.add.text(game.world.centerX, 425, 'Your Score: ' + this.prevScore, fontSettings);
     this.labelprevScore.anchor.setTo(0.5);
 
+
     if(this.eta > 0) {
       var verb = this.prevScore ? 'restart' : 'start';
       this.labelInstructions = game.add.text(game.world.centerX, 350, 'Tap to ' + verb + ' game', fontSettings);
@@ -86,7 +87,7 @@ var mainState = {
   initGame: function() {
     game.physics.arcade.enable(this.bird);
     this.bird.body.gravity.y = (this.score >= 12) ? 1000: 1200;
-    this.labelScore = game.add.text(20, 20, '0', fontSettings);
+    this.labelScore = game.add.text(20, 15, '0', fontSettings);
     this.labelHighScore.destroy();
     this.labelprevScore? this.labelprevScore.destroy(): null;
     this.labelInstructions.destroy();
@@ -107,6 +108,12 @@ var mainState = {
 
     var frequency = (this.score <= 5) ? 1500 : 1200;
     this.timer = game.time.events.loop(frequency, this.addRowOfPipes, this);
+
+    var labelGroup = game.add.group();
+
+    labelGroup.add(this.labelETA);
+    labelGroup.add(this.labelScore);
+    game.world.bringToTop(labelGroup);
   },
 
   // This function is called 60 times per second.
@@ -167,7 +174,6 @@ var mainState = {
   // Restart the game
   restartGame: function() {
     // Start the 'main' state, which restarts the game
-    console.log(Math.max(this.score, parseInt(localStorage.highScore, 10)));
     localStorage.highScore = Math.max(this.score, parseInt(localStorage.highScore, 10));
     this.prevScore = this.score;
     game.state.start('main');
