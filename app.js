@@ -3,31 +3,24 @@ var game = new Phaser.Game(400, 600, Phaser.AUTO, 'game-div'),
     playerDetails = {
       highScore: 0,
       name: "Rambo",
-      eta: 180
+      eta: 180,
+      id: 'abcd1234'
     },
     fontSettings = {
       font: '30px Enriqueta',
       fill: '#ffffff'
-    }
-// Create 'main' state that will contain the game
+    },
+    SANDBOX_URL = 'sandbox.example.com' //append route
 var mainState = {
 
   // This function will be executed in the beginning.
   // It's where we load the game's assets.
   preload: function() {
-    // Change the background color of the game
     game.stage.backgroundColor = '#71C5CF';
-    // Load the bird sprite
     game.load.image('bird', 'assets/bird.png');
     game.load.image('background', 'assets/background.png');
     game.load.image('ground', 'assets/ground.png');
 
-    // game.load.image('plane', 'assets/plane.png');
-
-    // Load the pipe sprite
-    game.load.image('pipe', 'assets/pipe.png');
-
-    // Load the jump sound
     game.load.audio('jump', 'assets/jump.wav');
     game.load.audio('die', 'assets/die.wav');
     game.load.audio('hit', 'assets/hit.wav');
@@ -35,9 +28,7 @@ var mainState = {
   },
 
   // This function is called after the 'preload' function.
-  // Here we set up the game, display sprites, etc.
   create: function() {
-    // Set up the physics system
     game.physics.startSystem(Phaser.Physics.ARCADE);
     this.eta = this.eta || playerDetails.eta;
     this.prevScore = this.prevScore || 0;
@@ -65,17 +56,13 @@ var mainState = {
         (this.eta > 0) ? this.labelETA.setText('ETA: '+ --this.eta) : null;
       }, this)
 
-      // Display the bird on the screen
       this.bird = this.game.add.sprite(100, 245, 'bird');
       this.bird.scale.setTo(0.66, 0.66);
-      // this.plane = this.game.add.sprite(200, 145, 'plane');
       this.gameStarted = false;
-      // Call the 'jump' function when the space key is hit
       var spaceKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
       spaceKey.onDown.add(this.jump, this);
       game.input.onDown.add(this.jump, this);
-      // Display a score label in the top left
       this.score = 0;
     } else {
       this.gameOver();
@@ -100,9 +87,9 @@ var mainState = {
     this.gameplay = game.add.audio('gameplay');
 
     // Create a group of pipes
-    this.pipes = game.add.group(); // Create a group
-    this.pipes.enableBody = true; // Add physics to the group
-    this.pipes.createMultiple(20, 'pipe'); // Create 20 pipes
+    this.pipes = game.add.group();
+    this.pipes.enableBody = true;
+    this.pipes.createMultiple(20, 'pipe');
     this.gameplay.loop = true;
     this.gameplay.play();
 
@@ -129,7 +116,6 @@ var mainState = {
       return;
     }
 
-    // If the bird is out of the world, call the 'restartGame' function
     if (this.bird.inWorld === false) {
       if (this.bird.alive) {
         this.gameplay.stop();
@@ -138,8 +124,6 @@ var mainState = {
       this.restartGame();
     }
 
-
-    // Call 'hitPipe' each time the bird collides with a pipe
     game.physics.arcade.overlap(this.bird, this.pipes, this.hitPipe, null, this);
   },
 
@@ -173,30 +157,23 @@ var mainState = {
 
   // Restart the game
   restartGame: function() {
-    // Start the 'main' state, which restarts the game
     localStorage.highScore = Math.max(this.score, parseInt(localStorage.highScore, 10));
     this.prevScore = this.score;
     game.state.start('main');
     this.gameStarted = false;
   },
 
-  // Add one pipe
   addOnePipe: function(x, y) {
-    // Get the first dead pipe of the group
     var pipe = this.pipes.getFirstDead();
 
-    // Set new position of the pipe
     pipe.reset(x, y);
 
-    // Add velocity to the pipe to make it move left
     pipe.body.velocity.x = -200;
 
-    // Kill the pipe when it's no longer visible
     pipe.checkWorldBounds = true;
     pipe.outOfBoundsKill = true;
   },
 
-  // Add six pipes in a row with a hole in the middle
   addRowOfPipes: function() {
     // Pick where the hole will be
     var hole = Math.floor(Math.random() * 5) + 1;
@@ -215,27 +192,22 @@ var mainState = {
       }
     }
 
-    // Increase the score by 1 each time new pipes are created
     this.score += 1;
     this.labelScore.text = this.score;
   },
 
   hitPipe: function() {
-    // If the bird has already hit a pipe, we have nothing to do.
     if (!this.bird.alive) {
       return;
     }
 
-    // Set the alive property of the bird to false
     this.bird.alive = false;
 
     this.gameplay.stop();
     this.hitSound.play();
     this.dieSound.play();
-    // Prevent new pipes from appearing
     game.time.events.remove(this.timer);
 
-    // Go through all pipes, and stop their movement
     this.pipes.forEachAlive(function(p) {
       p.body.velocity.x = 0;
     }, this);
@@ -250,10 +222,43 @@ var mainState = {
     this.dieSound ? this.dieSound.play() : null;
     this.gameplay ? this.gameplay.stop() : null;
     this.bird.alive = false;
+    game.sound.mute;
+    makeRequest("POST", SANDBOX_URL, {
+      highScore: this.highScore,
+      userID: playerDetails.id
+    }).then(function(data) {
+      //window.navigator.href = "http://sandbox.example.com"
+      // redirect to listing page?
+    }).catch(function(error) {
+      console.log('kill yourself, highscore not registered');
+    });
     return;
   }
-
 };
+
+function makeRequest(method, url, data) {
+  return new Promise(function(resolve, reject) {
+    var xhr = new XMLHttpRequest();
+    xhr.opem(method, url);
+    xhr.onload = function() {
+      if(this.status >200 && this.status< 300){
+        resolve(xhr.response);
+      } else {
+        reject({
+          status: this.status,
+          statusText: xhr.statusText
+        })
+      }
+    }
+    xhr.onerror = function() {
+      reject({
+        status: this.status,
+        statusText: xhr.statusText
+      })
+    }
+    xhr.send();
+  });
+}
 
 WebFont.load({
   active: function() { game.time.events.add(Phaser.Timer.SECOND, bootload); },
