@@ -1,52 +1,14 @@
 // Initialize Phaser, and create a 400x490px game
-var game = new Phaser.Game(400, 600, Phaser.AUTO, 'game-div');
-
-var presetsMed = {
-    holes: 2,
-    gravity: 1000,
-    yVelocity: -250,
-    time: 1500
-  },
-  presetsEasy = {
-    holes: 2,
-    gravity: 1000,
-    yVelocity: -250,
-    time: 1500
-  },
-  presetsHard = {
-    holes: 2,
-    gravity: 1000,
-    yVelocity: -250,
-    time: 1500
-  };
-
-var difficulty = [{
-    holes: 2,
-    gravity: 1000,
-    yVelocity: -250,
-    time: 1500
-  }, {
-    holes: 2,
-    gravity: 1000,
-    yVelocity: -250,
-    time: 1500
-  }, {
-    holes: 2,
-    gravity: 1000,
-    yVelocity: -250,
-    time: 1500
-  }
-
-],
-playerDetails = {
-  highScore: 0,
-  name: "Rambo",
-  eta: 10
-},
-fontSettings = {
-  font: '30px Enriqueta',
-  fill: '#ffffff'
-}
+var game = new Phaser.Game(400, 600, Phaser.AUTO, 'game-div'),
+    playerDetails = {
+      highScore: 0,
+      name: "Rambo",
+      eta: 180
+    },
+    fontSettings = {
+      font: '30px Enriqueta',
+      fill: '#ffffff'
+    }
 // Create 'main' state that will contain the game
 var mainState = {
 
@@ -87,6 +49,7 @@ var mainState = {
     this.labelprevScore = game.add.text(game.world.centerX, 425, 'Your Score: ' + this.prevScore, fontSettings);
     this.labelprevScore.anchor.setTo(0.5);
 
+    if(this.eta > 0) {
       var verb = this.prevScore ? 'restart' : 'start';
       this.labelInstructions = game.add.text(game.world.centerX, 350, 'Tap to ' + verb + ' game', fontSettings);
       this.labelInstructions.anchor.setTo(0.5);
@@ -111,13 +74,16 @@ var mainState = {
       game.input.onDown.add(this.jump, this);
       // Display a score label in the top left
       this.score = 0;
+    } else {
+      this.gameOver();
+      return;
+    }
 
   },
 
   initGame: function() {
-    // Add gravity to the bird to make it fall
     game.physics.arcade.enable(this.bird);
-    this.bird.body.gravity.y = 1000;
+    this.bird.body.gravity.y = (this.score >= 12) ? 1000: 1200;
     this.labelScore = game.add.text(20, 20, '0', fontSettings);
     this.labelHighScore.destroy();
     this.labelprevScore? this.labelprevScore.destroy(): null;
@@ -136,8 +102,9 @@ var mainState = {
     this.pipes.createMultiple(20, 'pipe'); // Create 20 pipes
     this.gameplay.loop = true;
     this.gameplay.play();
-    // Call the 'addRowOfPipes' function every 1.5 seconds
-    this.timer = game.time.events.loop(1500, this.addRowOfPipes, this);
+
+    var frequency = (this.score <= 5) ? 1500 : 1200;
+    this.timer = game.time.events.loop(frequency, this.addRowOfPipes, this);
   },
 
   // This function is called 60 times per second.
@@ -149,9 +116,7 @@ var mainState = {
     }
 
     if(this.eta <= 0) {
-      this.labelETA = game.add.text(275, 20, 'GAME OVER', fontSettings);
-      this.gameplay.stop();
-      this.dieSound.play();
+      this.gameOver();
       return;
     }
 
@@ -181,8 +146,8 @@ var mainState = {
       this.initGame();
     }
 
-    // Add a vertical velocity to the bird
-    this.bird.body.velocity.y = -350;
+
+    this.bird.body.velocity.y = (this.score <= 8) ? -400 : -350;
 
     // Create an animation on the bird
     var animation = game.add.tween(this.bird);
@@ -227,10 +192,17 @@ var mainState = {
     // Pick where the hole will be
     var hole = Math.floor(Math.random() * 5) + 1;
 
-    // Add the six pipes
-    for (var i = 0; i < 10; i++) {
-      if (i != hole && i != hole + 1 && i != hole + 2  ) {
-        this.addOnePipe(400, i * 60 + 10);
+    if(this.score < 15) {
+      for (var i = 0; i < 10; i++) {
+        if (i != hole && i != hole + 1 && i != hole + 2  ) {
+          this.addOnePipe(400, i * 60 + 10);
+        }
+      }
+    } else {
+      for (var i = 0; i < 10; i++) {
+        if (i != hole && i != hole + 1) {
+          this.addOnePipe(400, i * 60 + 10);
+        }
       }
     }
 
@@ -258,6 +230,18 @@ var mainState = {
     this.pipes.forEachAlive(function(p) {
       p.body.velocity.x = 0;
     }, this);
+  },
+
+  gameOver: function() {
+    var fontLocal = {};
+    fontLocal.fill =  "#FF9289";
+    fontLocal.font =  "42px Enriqueta";
+    this.labelETA = game.add.text(game.world.centerX, game.world.centerY, 'GAME OVER', fontLocal);
+    this.labelETA.anchor.setTo(0.5);
+    this.dieSound ? this.dieSound.play() : null;
+    this.gameplay ? this.gameplay.stop() : null;
+    this.bird.alive = false;
+    return;
   }
 
 };
