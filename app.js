@@ -52,12 +52,14 @@ var mainState = {
     if(this.eta > 0) {
       var verb = this.prevScore ? 'restart' : 'start';
       this.labelInstructions = game.add.text(game.world.centerX, 350, 'Tap to ' + verb + ' game', fontSettings);
+
       this.labelInstructions.anchor.setTo(0.5);
       game.time.events.loop(Phaser.Timer.SECOND/2, function(i) {
         this.labelInstructions.visible = (this.eta % 2) ? true : false;
       }, this);
 
-      this.labelETA = game.add.text(275, 20, 'ETA: '+ this.eta, fontSettings);
+      this.labelETA = game.add.text(game.world.centerX, 35, 'ETA: '+ this.eta, fontSettings);
+      this.labelETA.anchor.setTo(0.5);
       game.time.events.loop(Phaser.Timer.SECOND, function() {
         (this.eta > 0) ? this.labelETA.setText('ETA: '+ --this.eta) : null;
       }, this)
