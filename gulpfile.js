@@ -3,8 +3,7 @@ var gulp = require('gulp'),
     connect = require('gulp-connect');
 
 gulp.task('watch', function() {
-  watch('./app.js')
-    .pipe(connect.reload());
+  watch('./app.js').pipe(connect.reload());
 });
 
 gulp.task('serve', function() {

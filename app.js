@@ -39,7 +39,7 @@ var difficulty = [{
 
 ],
 playerDetails = {
-  highScore: localStorage.highScore || 0,
+  highScore: 0,
   name: "Rambo",
   eta: 180
 },
@@ -70,7 +70,6 @@ var mainState = {
     game.load.audio('die', 'assets/die.wav');
     game.load.audio('hit', 'assets/hit.wav');
     game.load.audio('gameplay', 'assets/David_Whittaker_Lazy_Jones.wav');
-    localStorage.highScore = playerDetails.highScore;
   },
 
   // This function is called after the 'preload' function.
@@ -78,13 +77,21 @@ var mainState = {
   create: function() {
     // Set up the physics system
     game.physics.startSystem(Phaser.Physics.ARCADE);
-    localStorage.prevScore = localStorage.prevScore || 0;
+    this.eta = this.eta || playerDetails.eta;
+    this.prevScore = this.prevScore || 0;
     game.add.tileSprite(0, 0, game.world.width, game.world.height, 'background');
-    this.labelHighScore = game.add.text(game.world.centerX, 425, 'High Score: ' + localStorage.highScore, fontSettings);
-    +localStorage.prevScore ? this.labelprevScore = game.add.text(game.world.centerX, 465, 'Your Score: ' + localStorage.prevScore, fontSettings): null;
+
+    this.labelHighScore = game.add.text(game.world.centerX, 465, 'High Score: ' + localStorage.highScore, fontSettings);
     this.labelHighScore.anchor.setTo(0.5);
-    +(localStorage.prevScore) ? this.labelprevScore.anchor.setTo(0.5) : null;
-    this.labelETA = game.add.text(275, 20, 'ETA: '+ playerDetails.eta, fontSettings);
+
+    this.labelprevScore = game.add.text(game.world.centerX, 425, 'Your Score: ' + this.prevScore, fontSettings);
+    this.labelprevScore.anchor.setTo(0.5);
+
+    this.labelETA = game.add.text(275, 20, 'ETA: '+ this.eta, fontSettings);
+    game.time.events.loop(Phaser.Timer.SECOND, function() {
+      this.labelETA.setText('ETA: '+ --this.eta);
+    }, this)
+
     // Display the bird on the screen
     this.bird = this.game.add.sprite(100, 245, 'bird');
     this.bird.scale.setTo(0.66, 0.66);
@@ -94,7 +101,6 @@ var mainState = {
     var spaceKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
     spaceKey.onDown.add(this.jump, this);
-
     game.input.onDown.add(this.jump, this);
     // Display a score label in the top left
     this.score = 0;
@@ -179,8 +185,8 @@ var mainState = {
   restartGame: function() {
     // Start the 'main' state, which restarts the game
     localStorage.highScore = Math.max(this.score, parseInt(localStorage.highScore, 10));
-    localStorage.prevScore = this.score;
-    console.log(Math.max(this.score, parseInt(localStorage.highScore, 10)));
+    this.prevScore = this.score;
+    console.log(localStorage.highScore, Math.max(this.score, parseInt(localStorage.highScore, 10)));
     game.state.start('main');
     this.gameStarted = false;
   },
