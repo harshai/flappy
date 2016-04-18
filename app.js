@@ -41,7 +41,7 @@ var difficulty = [{
 playerDetails = {
   highScore: 0,
   name: "Rambo",
-  eta: 180
+  eta: 10
 },
 fontSettings = {
   font: '30px Enriqueta',
@@ -87,23 +87,31 @@ var mainState = {
     this.labelprevScore = game.add.text(game.world.centerX, 425, 'Your Score: ' + this.prevScore, fontSettings);
     this.labelprevScore.anchor.setTo(0.5);
 
-    this.labelETA = game.add.text(275, 20, 'ETA: '+ this.eta, fontSettings);
-    game.time.events.loop(Phaser.Timer.SECOND, function() {
-      this.labelETA.setText('ETA: '+ --this.eta);
-    }, this)
+      var verb = this.prevScore ? 'restart' : 'start';
+      this.labelInstructions = game.add.text(game.world.centerX, 350, 'Tap to ' + verb + ' game', fontSettings);
+      this.labelInstructions.anchor.setTo(0.5);
+      game.time.events.loop(Phaser.Timer.SECOND/2, function(i) {
+        this.labelInstructions.visible = (this.eta % 2) ? true : false;
+      }, this);
 
-    // Display the bird on the screen
-    this.bird = this.game.add.sprite(100, 245, 'bird');
-    this.bird.scale.setTo(0.66, 0.66);
-    // this.plane = this.game.add.sprite(200, 145, 'plane');
-    this.gameStarted = false;
-    // Call the 'jump' function when the space key is hit
-    var spaceKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+      this.labelETA = game.add.text(275, 20, 'ETA: '+ this.eta, fontSettings);
+      game.time.events.loop(Phaser.Timer.SECOND, function() {
+        (this.eta > 0) ? this.labelETA.setText('ETA: '+ --this.eta) : null;
+      }, this)
 
-    spaceKey.onDown.add(this.jump, this);
-    game.input.onDown.add(this.jump, this);
-    // Display a score label in the top left
-    this.score = 0;
+      // Display the bird on the screen
+      this.bird = this.game.add.sprite(100, 245, 'bird');
+      this.bird.scale.setTo(0.66, 0.66);
+      // this.plane = this.game.add.sprite(200, 145, 'plane');
+      this.gameStarted = false;
+      // Call the 'jump' function when the space key is hit
+      var spaceKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+
+      spaceKey.onDown.add(this.jump, this);
+      game.input.onDown.add(this.jump, this);
+      // Display a score label in the top left
+      this.score = 0;
+
   },
 
   initGame: function() {
@@ -113,8 +121,8 @@ var mainState = {
     this.labelScore = game.add.text(20, 20, '0', fontSettings);
     this.labelHighScore.destroy();
     this.labelprevScore? this.labelprevScore.destroy(): null;
-    // Change the center of rotation of the bird, called "anchor"
-    // (from upper-left to center-and-little-more-to-the-left)
+    this.labelInstructions.destroy();
+
     this.bird.anchor.setTo(-0.2, 0.5);
     // Add the sound
     this.jumpSound = game.add.audio('jump');
@@ -140,6 +148,13 @@ var mainState = {
       this.bird.angle += 1;
     }
 
+    if(this.eta <= 0) {
+      this.labelETA = game.add.text(275, 20, 'GAME OVER', fontSettings);
+      this.gameplay.stop();
+      this.dieSound.play();
+      return;
+    }
+
     // If the bird is out of the world, call the 'restartGame' function
     if (this.bird.inWorld === false) {
       if (this.bird.alive) {
@@ -148,6 +163,7 @@ var mainState = {
       }
       this.restartGame();
     }
+
 
     // Call 'hitPipe' each time the bird collides with a pipe
     game.physics.arcade.overlap(this.bird, this.pipes, this.hitPipe, null, this);
@@ -186,7 +202,6 @@ var mainState = {
     // Start the 'main' state, which restarts the game
     localStorage.highScore = Math.max(this.score, parseInt(localStorage.highScore, 10));
     this.prevScore = this.score;
-    console.log(localStorage.highScore, Math.max(this.score, parseInt(localStorage.highScore, 10)));
     game.state.start('main');
     this.gameStarted = false;
   },
@@ -259,3 +274,6 @@ function bootload() {
   game.state.start('main');
 }
 
+function sayHi() {
+  alert('Hello world');
+}
