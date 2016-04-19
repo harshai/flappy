@@ -20,6 +20,7 @@ var mainState = {
     game.load.image('bird', 'assets/bird.png');
     game.load.image('background', 'assets/background.png');
     game.load.image('ground', 'assets/ground.png');
+    game.load.image('pipe', 'assets/pipe.png');
 
     game.load.audio('jump', 'assets/jump.wav');
     game.load.audio('die', 'assets/die.wav');
