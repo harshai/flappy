@@ -3,7 +3,7 @@ var game = new Phaser.Game(400, 600, Phaser.AUTO, 'game-div'),
     playerDetails = {
       highScore: 0,
       name: "Rambo",
-      eta: 180,
+      eta: 10,
       id: 'abcd1234'
     },
     fontSettings = {
@@ -214,25 +214,28 @@ var mainState = {
   },
 
   gameOver: function() {
-    var fontLocal = {};
-    fontLocal.fill =  "#FF9289";
-    fontLocal.font =  "42px Enriqueta";
-    this.labelETA = game.add.text(game.world.centerX, game.world.centerY, 'GAME OVER', fontLocal);
-    this.labelETA.anchor.setTo(0.5);
-    this.dieSound ? this.dieSound.play() : null;
-    this.gameplay ? this.gameplay.stop() : null;
-    this.bird.alive = false;
-    game.sound.mute;
-    makeRequest("POST", SANDBOX_URL, {
-      highScore: this.highScore,
-      userID: playerDetails.id
-    }).then(function(data) {
-      //window.navigator.href = "http://sandbox.example.com"
-      // redirect to listing page?
-    }).catch(function(error) {
-      console.log('kill yourself, highscore not registered');
-    });
-    return;
+    if(!this.stupidEndFlag) {
+      var fontLocal = {};
+      this.stupidEndFlag = true;
+      fontLocal.fill =  "#FF9289";
+      fontLocal.font =  "42px Enriqueta";
+      this.labelETA = game.add.text(game.world.centerX, game.world.centerY, 'GAME OVER', fontLocal);
+      this.labelETA.anchor.setTo(0.5);
+      this.dieSound ? this.dieSound.play() : null;
+      this.gameplay ? this.gameplay.stop() : null;
+      this.bird.alive = false;
+      game.sound.mute;
+      makeRequest("POST", SANDBOX_URL, {
+        highScore: this.highScore,
+        userID: playerDetails.id
+      }).then(function(data) {
+        //window.navigator.href = "http://sandbox.example.com"
+        // redirect to listing page?
+      }).catch(function(error) {
+        console.log('kill yourself, highscore not registered');
+      });
+      return;
+    }
   }
 };
 
