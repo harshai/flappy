@@ -226,7 +226,6 @@ var mainState = {
       this.gameplay ? this.gameplay.stop() : null;
       this.bird.alive = false;
       game.sound.mute;
-      alert(playerDetails.id);
       makeRequest("POST", SANDBOX_URL, {
         highScore: this.highScore,
         userID: playerDetails.id
@@ -244,7 +243,7 @@ var mainState = {
 function makeRequest(method, url, data) {
   return new Promise(function(resolve, reject) {
     var xhr = new XMLHttpRequest();
-    xhr.opem(method, url);
+    xhr.open(method, url);
     xhr.onload = function() {
       if(this.status >200 && this.status< 300){
         resolve(xhr.response);
@@ -275,10 +274,6 @@ WebFont.load({
 function bootload() {
   game.state.add('main', mainState);
   game.state.start('main');
-}
-
-function sayHi() {
-  alert('Hello world');
 }
 
 function getURLParameter(name) {
