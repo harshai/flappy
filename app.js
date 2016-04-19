@@ -4,7 +4,7 @@ var game = new Phaser.Game(400, 600, Phaser.AUTO, 'game-div'),
       highScore: 0,
       name: "Rambo",
       eta: 10,
-      id: 'abcd1234'
+      id: getURLParameter('paxID');
     },
     fontSettings = {
       font: '30px Enriqueta',
@@ -225,6 +225,7 @@ var mainState = {
       this.gameplay ? this.gameplay.stop() : null;
       this.bird.alive = false;
       game.sound.mute;
+      alert(playerDetails.id);
       makeRequest("POST", SANDBOX_URL, {
         highScore: this.highScore,
         userID: playerDetails.id
@@ -277,4 +278,8 @@ function bootload() {
 
 function sayHi() {
   alert('Hello world');
+}
+
+function getURLParameter(name) {
+  return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null;
 }
