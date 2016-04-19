@@ -4,7 +4,7 @@ var game = new Phaser.Game(400, 600, Phaser.AUTO, 'game-div'),
       highScore: 0,
       name: "Rambo",
       eta: 10,
-      id: getURLParameter('paxID');
+      id: getURLParameter('paxID')
     },
     fontSettings = {
       font: '30px Enriqueta',
