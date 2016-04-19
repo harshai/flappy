@@ -3,7 +3,7 @@ var game = new Phaser.Game(400, 600, Phaser.AUTO, 'game-div'),
     playerDetails = {
       highScore: 0,
       name: "Rambo",
-      eta: 150,
+      eta: 45,
       id: getURLParameter('paxID')
     },
     fontSettings = {
